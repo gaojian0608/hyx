@@ -1,0 +1,146 @@
+<table id="dg"></table> 
+
+<div id="addStuInfo" class="easyui-dialog" title="添加学生信息" 
+		data-options="iconCls:'icon-add',resizable:true,modal:true,fit:true,closed:true">  
+	<form id="addStu" method="post" enctype="multipart/form-data">
+		<ul>
+			<li>
+				<label>姓名: </label>
+				<input type="text" name="sname" class="s_input">
+			</li>
+			<li>
+				<label>密码: </label>
+				<input type="password" name="pwd" class="s_input">
+			</li>
+			<li>
+				<label>性别: </label>
+				<input type="radio" name="sex" value="男"> 男
+				<input type="radio" name="sex" value="女"> 女
+			</li>
+			<li>
+				<label>年龄: </label>
+				<input type="number" name="age" class="s_input">
+			</li>
+			<li>
+				<label>头像: </label><!-- multiple="multiple"  可以一次选择多张图片 -->
+				<input type="file" name="stupic" multiple="multiple" accept="image/jpeg,image/png,image/gif" onchange="upload(this.files)">
+				<br>
+				<a href="javascript:btn_addStuInfo()" class="easyui-linkbutton s_input" data-options="iconCls:'icon-add'" 
+				   style="width:150px;margin:30px;" onchange="">添加</a>  
+			</li>
+			<li>
+				<div id="show_poto"></div>
+			</li>
+		</ul>
+	</form>
+</div>
+
+<style>
+.s_input{
+	width:180px;
+	line-height: 20px;
+	border: 1px #c07454 solid;
+}
+li{
+	list-style-type: none;
+	padding: 10px;
+}
+</style>
+<script type="text/javascript">
+
+$('#dg').datagrid({   
+    url:'findByPage',
+    fitColumns:true,  //设置为true将自动使列适应表格宽度以防止出现水平滚动
+    loadMsg:"数据加载中，请稍后...",  //当从远程站点载入数据时，显示的一条快捷信息
+    striped:true, //设置为true将交替显示行背景
+    pagination:true,  //设置true将在数据表格底部显示分页工具栏
+    rownumbers:true,  //设置为true将显示行数
+    pageSize:5, //当设置分页属性时，初始化每页记录数
+    pageList:[1,2,3,5,8,10],  //当设置分页属性时，初始化每页记录数列表
+    sortName:"sid",  //当数据表格初始化时以哪一列来排序
+    remoteSort:false,  //定义是否通过远程服务器对数据排序
+    columns:[[   
+        {field:'sids',title:'全选',width:100,align:'center',checkbox:true},   
+        /* {field:'photo',title:'学生头像',width:200,align:'center'}, 
+           {field:'sid',title:'学生学号',width:100,align:'center',},
+        */
+        {field:'photo',title:'学生头像',width:200,align:'center',sortable:true,
+        	formatter: function(value,row,index){
+				var str = '';
+        		if (value == ""){
+					str='<img src="images/b9.jpg" width="100px" height="100px">';
+				}else if(value.indexOf(",")>0){
+					value = value.split(",");
+					for( var i=0;i<value.length;i++ ){
+						str='<img src="'+value[i]+'" width="100px" height="100px">';
+					}
+				}else{
+					str='<img src="'+value+'" width="100px" height="100px">';
+				}
+        		return str;
+			}	   
+        },
+        {field:'sid',title:'学生学号',width:100,align:'center',sortable:true},
+        {field:'sname',title:'学生姓名',width:100,align:'center'},
+        {field:'sex',title:'学生性别',width:100,align:'center'},
+        {field:'age',title:'学生年龄',width:100,align:'center'},
+        {field:'pwd',title:'学生密码',width:200,align:'center',
+        	formatter: function(value,rowData,index){
+				if (value!=undefined){
+					return "******";
+				} 
+			}
+		},
+        {field:'_operate',title:'操作',width:100,align:'center',
+			formatter: function(value,row,index){
+				var str = '<a href="javascript:showStuDetail('+row.sid+')" class="icon-file icon-padding">详情</a>&nbsp;&nbsp;'
+						 +'&nbsp;&nbsp;<a href="javascript:deleteStu('+row.sid+')" class="icon-removes icon-padding">删除</a>';
+				return str;
+			}
+		},
+    ]],
+    toolbar: [{
+    	text:"添加",
+		iconCls: 'icon-add',
+		handler: function(){
+			$('#addStuInfo').dialog('open');  	
+		}
+	},'-',{
+		text:"修改",
+		iconCls: 'icon-edit',
+		handler: function(){alert('help')}
+	},'-',{
+		text:"删除",
+		iconCls: 'icon-remove',
+		handler: function(){alert('help')}
+	},'-',{
+		text:"撤销",
+		iconCls: 'icon-undo',
+		handler: function(){alert('help')}
+	}]
+
+});  
+
+//图片预览
+function upload(file){
+    for(var i=0;i<file.length;i++){
+	    var reader = new FileReader();
+	    reader.readAsDataURL(file[i]);
+	    reader.onload = function(e){ console.log(e.target.result);
+	    	var str='<img src="'+e.target.result+'" width="100px" height="100px" style="margin-right:10px;">';
+	    	$("#show_poto").append(str);   //内部插入
+	    }
+    }   
+}
+
+//添加学生信息
+function btn_addStuInfo(){
+	$('#addStu').form('submit', {   
+	    url:"addStuInfo",     
+	    success:function(data){   
+	        alert(data);   
+	        window.location.href='/ssm_stusys/back/manage/main.html';
+	    }   
+	});  
+}
+</script>

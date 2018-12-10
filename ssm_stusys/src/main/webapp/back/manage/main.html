@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主界面</title>
+<base href="/ssm_stusys/">
+<link rel="shortcut icon" type="image/x-icon" href="images/b9.jpg">
+<link rel="stylesheet" type="text/css" href="easyui/css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="easyui/css/icon.css" />
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="easyui/easyui-lang-zh_CN.js"></script>
+</head>
+<body class="easyui-layout">  
+    <!-- <div data-options="region:'north'" style="height:100px;"></div>   -->
+    <!-- <div data-options="region:'south',title:'South Title',split:true" style="height:100px;"></div>   -->
+    <!-- <div data-options="region:'east',iconCls:'icon-reload',title:'East',split:true" style="width:100px;"></div>  --> 
+    <div data-options="region:'west',title:'导航',split:true" class="easyui-accordion" style="width:200px;overflow:auto;" >
+    	<a id="btn" href="/ssm_stusys/back/manage/stu.html" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:100%">学生信息管理</a>
+    	<!-- <div title="学生管理" data-options="iconCls:'icon-save',selected:true" style="padding:10px;">  
+		     <a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">easyui</a>     
+		</div>  
+	    <div title="Title2" data-options="iconCls:'icon-reload'" style="padding:10px;">  
+		     <a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">easyui</a>      
+	    </div>  
+		<div title="Title3">  
+		     <a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">easyui</a>     
+		</div>   -->
+		
+    	
+    	<!-- <a href="javascript:void(0)">学生管理</a> -->
+    </div>  
+    <div data-options="region:'center',title:'内容区'">
+    	<div class="easyui-tabs" id="stuMess"></div>
+    </div>  
+    
+<script type="text/javascript">
+  	//点击链接地址，将链接的页面在center中生成选项卡显示出来
+    $("#btn").click(function(){
+    	var href = $(this).attr('href');   
+    	var value = $(this).text();        
+    	if( $('#stuMess').tabs('exists',value) ){
+    		$('#stuMess').tabs('select',value)
+    	}else{
+    		$('#stuMess').tabs('add',{   
+    		    title:value,   
+    		    href:href,   
+    		    closable:true   
+    		});  
+    	}
+    	return false;
+    });   	
+</script>
+</body> 
+</html>

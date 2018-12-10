@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.yc.dao.StuInfoMapper">
+ 
+ 	<!-- public int addStuInfo(StuInfoPO po); -->
+	<insert id="addStuInfo" parameterType="StuInfoPO">
+		insert into stuinfo(sname,pwd,sex,age,photo)values(#{sname},#{pwd},#{sex},#{age},#{photo})
+	</insert>
+	
+	<!-- public int update(StuInfoPO po); -->
+	<update id="update" parameterType="StuInfoPO">
+		update stuinfo
+		<set>
+			<if	test="pwd != '' and sname != null">
+				sname = #{sname},
+			</if>
+			<if	test="pwd != '' and pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if	test="age != null and age != ''">
+				age = #{age}
+			</if>
+		</set>
+		where sid = #{sid}
+	</update>
+	
+	<!-- public List<StuInfoPO> findAll(StuInfoPO po); -->
+	<select id="findAll" parameterType="StuInfoPO" resultType="StuInfoPO">
+		select * from stuinfo 
+		<where>
+			<if	test="sid != null">
+				and sid = #{sid}
+			</if>
+			<if	test="pwd != '' and sname != null">
+				and sname = #{sname}
+			</if>
+			<if	test="pwd != '' and pwd != null">
+				and pwd = #{pwd}
+			</if>
+			<if	test="age != null and age != ''">
+				and age = #{age}
+			</if>
+			<if	test="sex != null and sex != ''">
+				and sex = #{sex}
+			</if>
+		</where>
+	</select>
+
+	<!-- public JsonObject findByPage(JsonObject js); -->
+	<select id="findByPage" resultMap="userInfoJson">
+		select count(*),${pageNo} pageNo,${pageSize} pageSize,${beginRow} beginRow from stuinfo
+	</select>
+	<select id="find" resultType="StuInfoPO" parameterType="Map">
+		select * from stuinfo limit ${beginRow},${pageSize}
+	</select>
+	<resultMap type="com.yc.po.JsonObject" id="userInfoJson">
+		<result column="pageNo" property="pageNo"/>
+		<result column="pageSize" property="pageSize"/>
+		<result column="beginRow" property="beginRow"/>
+		<collection property="rows" column="{beginRow=beginRow,pageSize=pageSize}" ofType="StuInfoPO" select="find"></collection>
+	</resultMap>
+	
+	
+	
+	<!-- public int total() -->
+	<select id="total" resultType="Integer">
+		select count(*) from stuinfo
+	</select>
+	
+	<!-- public List<StuInfoPO> findByMap(Map<String, Object> map); -->
+ 
+ 
+ </mapper>
