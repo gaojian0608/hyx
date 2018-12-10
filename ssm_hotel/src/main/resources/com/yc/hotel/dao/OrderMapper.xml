@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.yc.hotel.dao.OrderMapper">
+<!-- 新增:public int insertOrder(OrderPO po); -->
+<insert id="insertOrder" parameterType="OrderPO">
+	insert into myorder(orid,mid,ordate,orcost,ormoney,orpayment,orstate,uid,ordemo01,ordemo02)
+	values(#{orid},#{mid},now(),#{orcost},100,0,'未预付',#{uid},#{ordemo01},#{ordemo02})
+</insert>
+
+<!-- 修改:public int updateOrder(OrderPO po); -->
+<update id="updateOrder" parameterType="OrderPO">
+	update myorder
+	<set>
+		<if test="mid != null">
+			mid=#{mid},
+		</if>
+		<if test="orcost != null and orcost != 0">
+			orcost=#{orcost},
+		</if>
+		<if test="ormoney != null and ormoney != 0">
+			ormoney=#{ormoney},
+		</if>
+		<if test="orpayment != null and orpayment != 0">
+			orpayment=#{orpayment},
+		</if>
+		<if test="orstate != null and orstate != '' ">
+			orstate=#{orstate},
+		</if>
+		<if test="uid != null">
+			uid=#{uid},
+		</if>
+		<if test="ordemo01 != null and ordemo01 != ''">
+			ordemo01=#{ordemo01},
+		</if>
+		<if test="ordemo02 != null and ordemo02 != ''">
+			ordemo02=#{ordemo02},
+		</if>
+	</set>
+	where orid = #{orid}
+</update>
+
+<!-- 删除:public int deleteOrder(OrderPO po); -->
+<delete id="deleteOrder" parameterType="OrderPO">
+	delete from myorder where orid = #{orid}
+</delete>
+
+<!-- 查询:public List<OrderPO> seleteOrder(OrderPO po); -->
+<select id="seleteOrder" parameterType="OrderPO" resultType="OrderPO">
+	select * from myorder
+	<where>
+		<if test="orid != null">
+			and orid = #{orid}
+		</if>
+		<if test="mid != null">
+			and mid=#{mid}
+		</if>
+		<if test="orcost != null and orcost != 0">
+			and orcost=#{orcost}
+		</if>
+		<if test="ormoney != null and ormoney != 0">
+			and ormoney=#{ormoney}
+		</if>
+		<if test="orpayment != null and orpayment != 0">
+			and orpayment=#{orpayment}
+		</if>
+		<if test="orstate != null and orstate != '' ">
+			and orstate=#{orstate}
+		</if>
+		<if test="uid != null">
+			and uid=#{uid}
+		</if>
+		<if test="ordemo01 != null and ordemo01 != ''">
+			and ordemo01=#{ordemo01}
+		</if>
+		<if test="ordemo02 != null and ordemo02 != ''">
+			and ordemo02=#{ordemo02}
+		</if>
+	</where>
+</select>
+
+<!-- 入住及其详情级联查询:public List<OrderPO> seleteOrderAndItem(OrderPO po) -->
+<resultMap type="OrderPO" id="orderAndItem">
+	<id column="orid" property="orid"/>
+	<result column="mid" property="mid"/>
+	<result column="ordate" property="ordate"/>
+	<result column="orcost" property="orcost"/>
+	<result column="ormoney" property="ormoney"/>
+	<result column="orpayment" property="orpayment"/>
+	<result column="orstate" property="orstate"/>
+	<result column="uid" property="uid"/>
+	<result column="ordemo01" property="ordemo01"/>
+	<result column="ordemo02" property="ordemo02"/>
+	<collection property="items" ofType="OrderItemPO">
+			<id column="oiid" property="oiid" />
+	  		<result column="orid" property="orid"/>
+	  		<result column="idcard" property="idcard"/>
+	  		<result column="rmid" property="rmid"/>
+	  		<result column="oiarrival" property="oiarrival"/>
+	  		<result column="oideparture" property="oideparture"/>
+	  		<result column="oiday" property="oiday"/>
+	  		<result column="type" property="type"/>
+	  		<result column="price" property="price"/>
+	  		<result column="oidemo01" property="oidemo01"/>
+	  		<result column="oidemo02" property="oidemo02"/>
+		</collection>
+</resultMap>
+<select id="seleteOrderAndItem" parameterType="OrderPO" resultMap="orderAndItem">
+	select * from myorder o inner join orderitem i on o.orid = i.orid 
+	<where>
+		<if test="orid != null">
+			and o.orid = #{orid}
+		</if>
+		<if test="mid != null">
+			and mid=#{mid}
+		</if>
+		<if test="orcost != null and orcost != 0">
+			and orcost=#{orcost}
+		</if>
+		<if test="ormoney != null and ormoney != 0">
+			and ormoney=#{ormoney}
+		</if>
+		<if test="orpayment != null and orpayment != 0">
+			and orpayment=#{orpayment}
+		</if>
+		<if test="orstate != null and orstate != '' ">
+			and orstate=#{orstate}
+		</if>
+		<if test="uid != null">
+			and uid=#{uid}
+		</if>
+		<if test="ordemo01 != null and ordemo01 != ''">
+			and ordemo01=#{ordemo01}
+		</if>
+		<if test="ordemo02 != null and ordemo02 != ''">
+			and ordemo02=#{ordemo02}
+		</if>
+	</where>
+</select>
+
+</mapper>

@@ -1,0 +1,247 @@
+
+<table id="roomInfo"  class="easyui-dialog" title="房间信息" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true,width:600,height:400">
+	<form id="roomManage" method="post" enctype="multipart/form-data"></form>
+</table>
+
+<input id="Order_allRmid" style="width:300px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a id="btn" href="javascript:addOrder()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">确定入住</a>  
+
+<div id="addOrder"  class="easyui-dialog" title="入住订单信息" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true,width:900,height:600">
+		<div>
+			<label>房间号:</label><input id="rmids" name="rmids" /><br><br>
+		</div>
+		<table id="itemMes" class="easyui-datagrid" data-options="singleSelect:true">  
+		    <thead>  
+		        <tr>  
+		            <th data-options="field:'rmid',width:100,align:'center',editor:{type:'validatebox',options:{}}">房间号</th>  
+		            <th data-options="field:'idcard',width:100,align:'center',editor:{type:'validatebox',options:{}}">身份证</th>  
+		            <th data-options="field:'type',width:100,align:'center',editor:{type:'validatebox',options:{}}">客房类型</th>
+		            <th data-options="field:'price',width:100,align:'center',editor:{type:'validatebox',options:{}}">房价/天</th>
+		            <th data-options="field:'oiarrival',width:100,align:'center',editor:{type:'datebox',options:{}}">入住日期</th>
+		            <th data-options="field:'oideparture',width:100,align:'center',editor:{type:'datebox',options:{}}">退房日期</th>
+		            <th data-options="field:'oiday',width:100,align:'center',editor:{type:'validatebox',options:{}}">入住天数</th>
+		            <th data-options="field:'oidemo01',width:100,align:'center',editor:{type:'validatebox',options:{}}">预付房费</th>  
+		        </tr>  
+		    </thead>  
+		</table> 
+		<a id="btn_sure" href="javascript:sendJson()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">确定</a>   				
+</div>
+
+<div id="fOrder"  class="easyui-dialog" title="入住订单信息" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true,width:1000,height:600">
+		<div>
+			<label>订单号:</label><input id="orid" name="orid" /> &nbsp;&nbsp;
+			<label>操作员:</label><input id="uid" name="uid" />
+		</div>
+		<table id="fItemMes" class="easyui-datagrid" data-options=""></table> 
+		<a id="btn_pay" href="javascript:sendJson()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">付款</a>   				
+</div>
+
+<table id="show" border="1"></table>  
+
+<script>
+showTable();
+
+//显示各房间状态
+function showTable(){
+	//查询所有类型并给基础表格赋值
+	$.get("RoomType/findRT",function(data){
+			var strname = '<tr>';
+			var strid = '<tr>';
+			for( var i=0;i<data.length;i++ ){	
+				strname+='<th style="width:100px;">'+data[i].tname+'</th>';
+				strid+='<td><table id="'+data[i].tid+'"  class="fstatus"></table>';		
+			}
+			strname+='</tr>';
+			strid+='</tr>';
+			$("#show").html(strname+strid);
+	});	
+
+	//给基础表格对应类型下的表格赋值
+	$.get("RoomType/findRT",function(data){
+		for( var i=0;i<data.length;i++ ){
+			$('#'+data[i].tid).datagrid({   
+			    url:'Room/findR', 
+			    queryParams: {
+					tid: data[i].tid
+				},
+				width:100,
+				height:560,
+			    columns:[[   
+			        {field:'rmid',title:'rmid',width:98,formatter:function(value,row,index){
+			        	var cc='';
+			        	cc+='<a href="javascript:show('+row.rmid+')" class=icon-file icon-padding>'+row.rmid+'</a>';
+			        	return cc;
+			        }} ,
+			        {field:'rmstate',title:'rmstate',hidden:true}
+			    ]],
+			    rowStyler:function(index,row){
+			    	//console.log(row);
+			    	if( row.rmstate == '空闲' ){
+			    		return 'background-color:lime';
+			    	}else if( row.rmstate == '清理中' ){
+			    		return 'background-color:yellow';
+			    	}else if( row.rmstate == '已入住' ){
+			    		return 'background-color:red';
+			    	}else if( row.rmstate == '维修中' ){
+			    		return 'background-color:gray';
+			    	}else if( row.rmstate == '已预定' ){
+			    		return 'background-color:orange';
+			    	}		    		
+			    },		  
+			    onDblClickCell: function(index,field,value){
+			    	var str = $("#Order_allRmid").val();
+			    	if( str == '' ){
+			    		$("#Order_allRmid").val(value);
+			    	}else{
+			    		$("#Order_allRmid").val(str+","+value);
+			    	}
+			    }
+			});  
+		}
+	});
+}
+
+//查看客房详细信息
+function show(rmid){
+	$("#roomInfo").dialog("open");
+	$.get("Room/findRu/"+rmid,function(data3){
+		console.log(data3)
+		var ss ='<tr><td>房间号</td><td>房价</td><td>房间状态</td><td>房间描述</td></tr>';
+		for(var z = 0;z<data3.length;z++){
+			ss+='<tr><td>'+data3[z].rmid+'</td><td>'+data3[z].rmprice+'</td><td>'+data3[z].rmstate+'</td><td>'+data3[z].rmdesc+'</td><td><input type="button" onclick=clean('+data3[z].rmid+') value="清理中"/></td><td><input type="button" onclick=liveIn('+data3[z].rmid+') value="入住"/></td></tr>';
+		}
+		$("#roomInfo").html(ss);
+	});
+} 
+
+//添加入住
+function addOrder(){
+	var rmids = $("#Order_allRmid").val(); //alert(rmids);
+	$('#addOrder').window('open'); 
+	//$('#addOrder #orderManage #rmids').val(rmids);
+	var rmidsArr = rmids.split(',');
+	for( var i=0;i<rmidsArr.length;i++ ){ alert(new Date());//alert(rmidsArr[i]);
+		$.get("Room/findR",{rmid:rmidsArr[i]},function(data){ console.log(data);
+			$('#itemMes').datagrid('appendRow',{
+				rmid: data[0].rmid,
+				type: data[0].rtype.tname,
+				price: data[0].rmprice
+			});
+		});
+	}
+}
+
+var flag = undefined;
+$('#itemMes').datagrid({
+	toolbar:[{
+    	text:'添加',
+    	iconCls:'icon-add',
+    	handler:function(){
+    		alert("添加");
+    	} 
+    },'-',{
+    	text:'修改',
+    	iconCls:'icon-edit',
+    	handler:function(){
+			var hasSelect = $("#itemMes").datagrid("getSelections");
+			if(hasSelect.length == 1){
+				var row = hasSelect[0];
+				flag = $("#itemMes").datagrid("getRowIndex",row);
+				$("#itemMes").datagrid("beginEdit",flag);
+			}
+		} 
+    },'-',{
+    	text:'删除',
+    	iconCls:'icon-remove',
+    	 handler:function(){
+    		var hasSelect = $("#itemMes").datagrid("getSelections");
+    		if( hasSelect[0].tnum == 0 ){
+    			var tid = hasSelect[0].tid;
+        		if(hasSelect.length>0){
+        			$.messager.confirm('温馨提示','是否删除!',function(r){
+        				if(r){	 						
+        					 alert("移除该行数据");
+        				}
+        			});
+        		}
+    		}  		
+		} 
+    },'-',{
+    	text:'保存',
+		iconCls:'icon-save',
+		handler:function(){
+			$("#itemMes").datagrid("endEdit",flag);
+		} 
+    },'-',{
+    	text:'取消',
+    	iconCls:'icon-redo',
+    	handler:function(){
+    		flag=undefined;
+    		$("#itemMes").datagrid('rejectChanges');
+    	} 
+    }],
+	onAfterEdit:function(rowIndex,rowData,changes){ //console.log(changes);
+    	var date1 = convertDateFromString(changes.oiarrival);
+    	var date2 = convertDateFromString(changes.oideparture);
+    	var days = (date2-date1)/(24*60*60*1000);
+    	$(this).datagrid('updateRow',{
+    		index: rowIndex,
+    		row: {
+    			oiday: days,
+    			oidemo01:rowData.price*days
+    		}
+    	});
+    }
+});
+
+//将字符串转为日期对象
+function convertDateFromString(dateString) {
+	if (dateString) { 
+	var date = new Date(dateString.replace(/-/,"/")) 
+	return date;
+	}
+}
+
+function sendJson() {
+    var row=$('#itemMes').datagrid('getRows');
+    $.ajax({
+    	type:"post",
+        url:"Order/addO",
+        data: JSON.stringify(row),//必须
+        dataType:"json",
+        contentType:"application/json;charset=utf-8",
+        success:function(data) {
+           if( data == '0' ){
+        	   alert("入住订单添加失败!!!");
+           }else{
+        	   alert("订单编号为:"+data+"的入住订单添加成功!!!");
+        	   $('#addOrder').window('close'); 
+        	   fItem(data);       	     
+           }
+        }
+    });
+}
+
+function fItem(orid){
+	$('#fOrder').window('open');
+	$('#fItemMes').datagrid({   
+	    url:'OrderItem/findOI', 
+	    queryParams: {
+			orid: orid
+		},
+	    columns:[[   
+	        {field:'oiid',title:'详情编号',width:100,align:'center'},   
+	        {field:'orid',title:'订单编号',width:100,align:'center'}, 
+	        {field:'rmid',title:'房间号',width:100,align:'center'},
+	        {field:'idcard',title:'入住人身份证号',width:100,align:'center'},  
+	        {field:'type',title:'客房类型',width:100,align:'center'},
+	        {field:'price',title:'价格/天',width:100,align:'center'},
+	        {field:'oiarrival',title:'入住时间',width:100,align:'center'},   
+	        {field:'oideparture',title:'退房时间',width:100,align:'center'},
+	        {field:'oiday',title:'入住天数',width:100,align:'center'},
+	        {field:'oidemo01',title:'预付费',width:100,align:'center'}       		        
+	    ]]   
+	});
+}
+
+</script>

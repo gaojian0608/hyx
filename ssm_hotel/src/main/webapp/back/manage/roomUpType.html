@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>客房管理</title>
+</head>
+<body>
+<table id="RoomType_data" data-options="fit:true"></table>
+
+<div id="RoomType_add_type" class="easyui-dialog" title="添加房间类型" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true,width:460,height:300">
+	<form id="addRoomTypeForm" method="post" enctype="multipart/form-data">
+		<ul style="margin-left: 30px;">
+			<li>
+				<label>客 房 类 型:</label>
+				<input type="text" name="tname" data-options="required:true" id="RoomType_add_type_tname" class="easyui-validatebox store_input" />
+				<span></span>
+			</li>
+			<li>	<!-- 输入框只能输入正整数:onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" -->
+				<label>入 住 人 数:</label>
+				<input type="text" name="pnum" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" data-options="required:true" id="RoomType_add_type_pnum" class="easyui-validatebox store_input" />
+			</li>
+			<li>
+				<label>描   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述:</label>
+				<input type="text" name="tdesc" data-options="required:true" id="RoomType_add_type_tdesc" class="easyui-validatebox store_input" />
+			</li>
+			<!-- <li>
+				<label>预留字段:</label>
+				<input type="text" name="tdesc"  id="RoomType_add_type_tdesc" class="easyui-validatebox store_input" />
+			</li> -->
+			<li>
+				<a href="javascript:addRoomType()" class="easyui-linkbutton" data-options="iconCls:'icon-add'"style="margin-left:50px;width:150px;">添加</a>				
+			</li>
+			<!-- <li>
+				<div id="show_photo" style="width: 100px;height: 100px;">
+					<img class="img" src="" style="width: 100px;height: 100px;">
+				</div>
+			</li> -->
+		</ul>
+	</form>
+</div>
+
+<table id="see"></table>
+
+<form method="post" action="" class="myform">
+	<input type="hidden" name="_method" value="DELETE"/>
+</form>
+
+<script type="text/javascript">
+var flag = undefined;
+$('#see').datagrid({
+    url:'RoomType/findRT',
+    striped:'true',
+    rownumbers:true,
+    toolbar:[{
+    	text:'添加',
+    	iconCls:'icon-add',
+    	handler:function(){
+    		$("#RoomType_add_type").dialog("open");
+    	} 
+    },'-',{
+    	text:'修改',
+    	iconCls:'icon-edit',
+    	handler:function(){
+			var hasSelect = $("#see").datagrid("getSelections");
+			if(hasSelect.length == 1){
+				var row = hasSelect[0];
+				flag = $("#see").datagrid("getRowIndex",row);
+				$("#see").datagrid("beginEdit",flag);
+			}
+		} 
+    },'-',{
+    	text:'删除',
+    	iconCls:'icon-remove',
+    	 handler:function(){
+    		var hasSelect = $("#see").datagrid("getSelections");
+    		if( hasSelect[0].tnum == 0 ){
+    			var tid = hasSelect[0].tid;
+        		if(hasSelect.length>0){
+        			$.messager.confirm('温馨提示','是否删除!',function(r){
+        				if(r){	 						
+        					 $.post("RoomType/delRT",{tid:tid,"_method":"DELETE"},function(data){alert(data);
+    								if(data==1){
+    									$("#see").datagrid("reload");
+    								}else{
+    									alert("删除失败！");
+    								}
+    							})	
+        				}
+        			});
+        		}
+    		}else{
+    			alert("由于还存在该类型的客房，所以该类型还不能被删除...");
+    		}  		
+		} 
+    },'-',{
+    	text:'保存',
+		iconCls:'icon-save',
+		 handler:function(){
+			$("#see").datagrid("endEdit",flag);
+		} 
+    },'-',{
+    	text:'取消',
+    	iconCls:'icon-redo',
+    		handler:function(){
+    		flag=undefined;
+    		$("#see").datagrid('rejectChanges');
+    	} 
+    }],
+    onAfterEdit:function(rowIndex,rowData,changes){
+    	
+    },
+   	pagination:'true',//显示行号列
+   	singleSelect:'true',//是允许选择一行
+   	pageList:[1,3,6,10],
+   	pageSize:10,
+   	sortName:'tid',
+   	sortOrder:'desc',
+    columns:[[{field:'tid',title:'序号',width:150,align:'center',sortable:'true'},
+        {field:'tname',title:'客房类型',width:150,align:'center',editor:{type:'validatebox',options:{}}},
+        {field:'tnum',title:'客房数量',width:100,align:'center'},
+        {field:'pnum',title:'最大入住人数',width:150,align:'center',editor:{type:'validatebox',options:{}}},
+        {field:'tdesc',title:'描述',width:150,align:'center',editor:{type:'validatebox',options:{}}},
+      
+    ]],
+    onAfterEdit:function(rowIndex,rowData,changes){
+    	var tid = rowData.tid;
+    	var tname = rowData.tname;
+    	var tnum = rowData.tnum;
+    	var pnum = rowData.pnum;   	
+    	var tdesc = rowData.tdesc;
+    	
+    	$.post("RoomType/updateRT",{tid:tid,tname:tname,tnum:tnum,pnum:pnum,tdesc:tdesc,"_method":"PUT"},
+	    	function(data){ //alert(data);
+	    		if(data==1){
+	    			$("#see").datagrid("reload");
+	    		}else{
+	    			alert("修改失败！");
+	    		}
+    		})
+    }
+});  
+
+var flag = '';
+//验证客房类型是否已存在 以及格式
+$("#addRoomTypeForm input[name='tname']").blur(function(){
+	//获取相邻的span标签 并赋样式
+	$("#addRoomTypeForm input[name='tname'] ~ span").css("color","red");
+	
+	var tname = $(this).val();
+	//判断是否输入房间类型
+	if(tname == ''){
+		$("#addRoomTypeForm input[name='tname'] ~ span").html("");
+		return;
+	}
+	
+	//发送ajax请求
+	$.get("RoomType/findRT",{tname:tname},function(data){
+		//解析
+		console.log(tname);		
+		//判断重名
+		if(data == 0){
+			$("#addRoomTypeForm input[name='tname'] ~ span").html("房间类型可用!");
+			flag = true;
+		}else{
+			$("#addRoomTypeForm input[name='tname'] ~ span").html("房间类型已存在!");
+			flag = false;
+		}  	 
+	}); 
+});
+
+function addRoomType(){
+	if(flag == true){//判断是否为重名，通过后进行表单提交	
+		$("#addRoomTypeForm").form('submit',{
+			url:'RoomType/addRT',
+			onSubmit:function(){ //表单提交前的回调函数
+				//所有数据符合校验要求时，isValid 返回true
+				var isValid = $(this).form('validate');
+				if(isValid == false){	
+					alert("客房类型的信息还没有填写完整，请按要求填写完整...");
+				}
+				return isValid;	// 如果验证不通过，返回false终止表单提交
+			},
+			success:function(data){ //alert(data);
+				if(data==1){
+					$("#RoomType_add_type").dialog("close");
+					$("#see").datagrid("reload");
+				}else{
+					alert("添加失败！")
+				}
+			}
+		})
+	}else{
+		alert("客房类型不能为空且不能为已存在类型...");
+	}
+}
+
+//监听输入框只能输入0和正整数
+$(document).on("input propertychange",".inputNumber",function(){
+	var limitNum = $(this).val().replace(/[^\d]/g, "");
+	  if(limitNum>=0){
+	      $(this).val(limitNum);
+	  }else{
+	      $(this).val("");
+	  }
+});
+
+</script>
+
+</body>
+</html>

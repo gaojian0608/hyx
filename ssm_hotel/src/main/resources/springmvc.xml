@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p" 
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	   xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+				        http://www.springframework.org/schema/beans 
+				        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+				        http://www.springframework.org/schema/context 
+				        http://www.springframework.org/schema/context/spring-context-4.2.xsd 
+				        http://www.springframework.org/schema/mvc 
+				        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd 
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+	 
+	 <!-- 配置自动扫描的包 -->
+	 <context:component-scan base-package="com.yc.hotel">
+	 	<!-- 只扫描控制器 -->
+	 	<!-- <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/> -->
+	 </context:component-scan>
+	
+	<!-- 视图处理器 解析jsp视图  默认使用jstl标签 如何把handler方法返回值解析为实际的物理视图 -->
+    <!--  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+     	/views/  访问的是webapp目录下的views文件夹中的资源
+     		 / 访问的是weapp目录下资源
+     	
+     	<property name="prefix" value="/"></property> 
+     	<property name="suffix" value=".html"></property>
+     </bean> -->
+	
+	<mvc:annotation-driven/>
+	<!-- 静态资源 -->
+	<mvc:default-servlet-handler/>
+	
+	   <!-- 文件上传的解析器
+         要想使用表单提交enctype="multipart/form-data"格式的数据(如上传图片),需要配置此解析器,不配置的话参数绑定会失败 -->
+     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	     <!-- <property name="maxUploadSize" value="104857600" />
+	     <property name="maxInMemorySize" value="4096" /> -->
+	     <property name="defaultEncoding" value="UTF-8"></property>
+	 </bean>
+	 <!-- <bean  class="com.common.utils.GlobalHandlerExceptionResolver"></bean> -->
+</beans>

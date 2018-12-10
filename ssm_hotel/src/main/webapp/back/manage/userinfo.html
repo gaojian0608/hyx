@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form method="post" action="" class="myform"></form>
+<input type="hidden" name="_method" value="DELETE"/>
+<table id="tt1">
+	<tr>
+		<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>员工姓名：</label></th>
+		<td><input type="text" name="uname"  style="width:150px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<th><label>员工状态：</label></th>
+		<td>
+			<select id="cc" class="easyui-combobox" name="dept" style="width:150px;">
+				<option value=""></option>   
+			    <option value="在职">在职</option>  
+			    <option value="离职">离职</option>  
+			    <option value="退休">退休</option>   
+			</select>   
+    		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<th><label>员工类型：</label></th>
+		<td>
+			<select id="dd" class="easyui-combobox" name="utype" style="width:150px;"> 
+				<option value=""></option> 
+			    <option value="普通员工">普通员工</option>  
+			    <option value="酒店经理">酒店经理</option>    
+			</select> 
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<td><input type="button" onclick="find()" value="查询"/></td>
+		
+	</tr>
+
+</table>
+<table id="stuinfo_data"></table>
+<div id="add_user"  class="easyui-dialog" title="添加员工信息" style="display:none" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true">
+	<form id="addUser" method="post" enctype="multipart/form-data">
+		<ul>
+			<li>
+				<label>员工姓名：</label>
+				<input type="text" name="uname">
+			</li>
+			<li>
+				<label>员工密码：</label>
+				<input type="password" name="upwd">
+			</li>
+			<li>
+				<label>员工类型：</label>
+				<select id="sel" name="utype">
+					<option value="普通员工">普通员工</option>
+					<option value="酒店经理">酒店经理</option>
+				</select>
+			</li>
+			<li>
+				<label>员工状态：</label>
+				<input type="radio" name="ustate" value="在职"/>在职
+				<input type="radio" name="ustate" value="离职"/>离职
+				<input type="radio" name="ustate" value="退休"/>退休				
+			</li>
+			<li>
+				<label>预留字段：</label>
+				<input type="text" name="udemo"/>
+			</li>
+			<li><input type="button" onclick="addUser()" value="确认添加"></li>
+		</ul>
+	</form>
+</div>
+
+
+<script type="text/javascript">
+var flag = undefined;
+$('#stuinfo_data').datagrid({
+	url:'user/findAll',
+	fitColumns:true,
+	loadMsg:"数据加载中，请稍等...",
+	striped:true,
+	pagination:true,
+	rownumbers:true,
+	 toolbar:[{
+	    	text:'添加',
+	    	iconCls:'icon-add',
+	    	handler:function(){
+	    		$("#add_user").dialog("open");
+	    	}
+	    },'-',{
+	    	text:'修改',
+	    	iconCls:'icon-edit',
+	    	handler:function(){
+	    		
+				var hasSelect = $("#stuinfo_data").datagrid("getSelections");
+				
+				if(hasSelect.length == 1){
+					var row = hasSelect[0];	
+					flag = $("#stuinfo_data").datagrid("getRowIndex",row);
+					$("#stuinfo_data").datagrid("beginEdit",flag);
+				}
+			}
+	    },'-',{
+	    	text:'删除',
+	    	iconCls:'icon-remove',
+	    	 handler:function(){
+	    		var hasSelect = $("#stuinfo_data").datagrid("getSelections");
+	    		var uid = hasSelect[0].uid;
+	    		console.log(uid);
+	    		if(hasSelect.length>0){
+	    			$.messager.confirm('温馨提示','是否删除!',function(r){
+	    				if(r){	 
+							
+	    					 $.post("user/del/"+uid,{uid:uid,"_method":"DELETE"},function(data){alert(data);
+									if(data==1){
+										$("#stuinfo_data").datagrid("reload");
+									}else{
+										alert("删除失败！");
+									}
+								})	
+	    				}
+	    			});
+	    		}
+			} 
+	    },'-',{
+	    	text:'保存',
+			iconCls:'icon-save',
+			handler:function(){
+				$("#stuinfo_data").datagrid("endEdit",flag);
+			}
+	    },'-',{
+	    	text:'取消',
+	    	iconCls:'icon-redo',
+	    	handler:function(){
+	    		flag=undefined;
+	    		$("#stuinfo_data").datagrid('rejectChanges');
+	    	}
+	    }],
+	    onAfterEdit:function(rowIndex,rowData,changes){
+	    	
+	    },
+	pageSize:5,
+	pageList:[5,10,20,30,40,50],
+	sortName:"uid",
+	remoteSort:false,
+	columns:[[
+	  {field:'uids',title:'全选',width:100,align:'center',checkbox:true},
+	  /* {field:'photo',title:'学生图像',width:200,align:'center',sortable:true,formatter:function(value,row,index){
+		  var str="";
+				if(value==null){//未上传图片
+					str="<img src='image/0.jpg' width='100px' height='100px'/>";
+				}else if(value.indexOf(",")>0){//多文件上传   1.png,2.png
+					value=value.split(",");
+					for(var i = 0;i<value.length;i++){//循环图片
+						str+="<img src='"+value[i]+"' width='100px' height='100px'/>";
+					}
+				}else{
+					str="<img src='"+value+"' width='100px' height='100px'/>"
+				} 
+				return str;  
+	  }}, */
+	  
+		  {field:'uid',title:'编号',width:50,align:'center',sortable:true},
+          {field:'uname',title:'员工姓名',width:80,align:'center',editor:{type:'validatebox',options:{}}},
+          {field:'utype',title:'身份',width:80,align:'center',editor:{type:'validatebox',options:{}}},
+          {field:'ustate',title:'在职情况',width:50,align:'center',editor:{type:'validatebox',options:{}}},
+          {field:'upwd',title:'密码',width:150,align:'center',formatter:function(value,row,index){
+        	 if(value!=undefined){
+        		 return hex_md5(value); 
+        		
+        	 }
+          }},
+          /* {field:'_operate',title:'操作',width:100,align:'center',formatter:function(value,row,index){
+        	 var str='&nbsp;&nbsp;<a href="javascript:void(0)" class="icon-removes icon-padding" onclick="del('+row.uid+')">删除</a>';
+        	 return str;
+          }}, */	        
+		]],
+		 onAfterEdit:function(rowIndex,rowData,changes){
+		    	var uid=rowData.uid;
+		    	/* var tid = rowData.tid; */
+		    	var uname = rowData.uname;
+		    	var upwd = rowData.upwd;
+		    	var utype = rowData.utype;
+		    	console.log(utype+"...");
+		    	var ustate = rowData.ustate;
+	 		if("酒店经理" ==utype ||  "普通员工"==(utype)){
+	 			$.post("user/update/"+uid,{uid:uid,uname:uname,upwd:upwd,utype:utype,ustate:ustate,"_method":"PUT"},
+				    	function(data){ //alert(changes.rtype);
+				    		if(data==1){
+				    			$("#stuinfo_data").datagrid("reload");
+				    		}else{
+				    			alert("修改失败！");
+				    		}
+			    		})
+	 		}else{	
+	 			alert("类型不匹配，请重新输入!!!");
+	 			$("#stuinfo_data").datagrid("reload");
+	 		}
+	 		
+ 			
+		    }
+	});
+
+function addUser(){
+	$("#addUser").form('submit',{
+		url:'user/addUser',
+		onSubmit:function(){
+			
+		},
+		success:function(data){ alert(data);
+			if(data==1){
+				alert("添加成功");
+				$("#add_user").dialog("close");
+				$("#stuinfo_data").datagrid("reload");
+				
+			}else{
+				alert("添加失败！");
+			}
+		}
+	});
+	
+}
+function find(){
+	var uname = $("#tt1 input[name='uname']").val();
+	var utype =$(" #dd").val();
+	var ustate = $(" #cc").val();
+	console.log(ustate+utype);
+	//console.log(uname+utype+ustate);
+	$("#stuinfo_data").datagrid("reload",{uname:uname,utype:utype,ustate:ustate});
+}
+ 
+</script>
+
+
+
+
+
+</body>
+</html>

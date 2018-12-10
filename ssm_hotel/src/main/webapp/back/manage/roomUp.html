@@ -1,0 +1,223 @@
+<table id="Room_data" data-options="fit:true"></table>
+
+<div id="Room_add_type" class="easyui-dialog" title="添加客房信息" data-options="iconCls:'icon-add',resizable:true,modal:true,closed:true,width:500,height:400">
+	<form id="addRoomForm" method="post" enctype="multipart/form-data">
+		<ul style="margin-left: 40px;">
+			<li>
+				<label>房 &nbsp;&nbsp;间 &nbsp;&nbsp;号:</label>
+				<input data-options="required:true" type="text" name="rmid" id="Room_add_room_rmid"  class="easyui-validatebox store_input" />
+				<span></span>
+			</li>
+			<li>
+				<label>客 房 类 型:</label>
+				<input data-options="required:true" class="easyui-validatebox tid" name="tid"/>
+			</li>
+			<li> <!-- 输入框只能输入正整数:onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" -->
+				<label>房   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价:</label>
+				<input data-options="required:true" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" type="text" name="rmprice" id="Room_add_room_rmprice" class="easyui-validatebox store_input" />
+			</li>
+			<!-- <li>
+				<label>客 房 状 态:</label>
+				<select class="easyui-validatebox easyi-combobox" name="rmstate" id="Room_add_room_rmstate">
+					<option  >空闲</option>
+					<option value="预定">预定</option>
+					<option value="使用">使用</option>
+					<option value="清洁">清洁</option>
+					<option value="维修">维修</option>					
+				</select>
+			</li> -->
+			<li>
+				<label>客 房 描 述:</label>
+				<input type="text" name="rmdesc"   class="store_input" />
+			</li>
+			<!-- <li>
+				<label>预留字段:</label>
+				<input type="text" name="rmdemo" id="Room_add_room_rmdemo" class="store_input" />
+			</li> -->
+			<li>
+				<a href="javascript:addRoom()" class="easyui-linkbutton" data-options="iconCls:'icon-add'" style="width:150px;margin-left:60px">添加</a>
+			</li>
+			<!-- <li>
+				<div id="show_photo" style="width: 100px;height: 100px;">
+					<img class="img" src="" style="width: 100px;height: 100px;">
+				</div>
+			</li> -->
+		</ul>
+	</form>
+</div>
+<div>
+<ul>
+	<li>
+		<label>客房类型</label>
+		<input class="tid" style="width:100px"/>
+	</li>
+</ul>
+
+<table id="see"></table>
+</div>
+
+<form method="post" action="" class="myform">
+	<input type="hidden" name="_method" value="DELETE"/>
+</form>
+
+<script type="text/javascript">
+$(function(){
+	 $('.tid').combobox({
+			url:"RoomType/findRT",
+		 	valueField:"tid",
+		 	textField:"tname",
+		});
+ })
+  
+var flag = undefined;
+$('#see').datagrid({
+    url:'Room/findR',
+    striped:'true',
+    rownumbers:true,
+    toolbar:[{
+    	text:'添加',
+    	iconCls:'icon-add',
+    	 handler:function(){
+    		$("#Room_add_type").dialog("open");
+    	} 
+    },'-',{
+    	text:'修改',
+    	iconCls:'icon-edit',
+    	 handler:function(){
+			var hasSelect = $("#see").datagrid("getSelections");
+			if(hasSelect.length == 1){
+				var row = hasSelect[0];
+				flag = $("#see").datagrid("getRowIndex",row);
+				$("#see").datagrid("beginEdit",flag);
+			}
+		} 
+    },'-',{
+    	text:'删除',
+    	iconCls:'icon-remove',
+    	 handler:function(){
+    		var hasSelect = $("#see").datagrid("getSelections");
+    		var rmid = hasSelect[0].rmid;
+    		if(hasSelect.length>0){
+    			$.messager.confirm('温馨提示','是否删除!',function(r){
+    				if(r){	 
+    					 $.post("Room/delR",{rmid:rmid,"_method":"DELETE"},function(data){ //alert(data);
+								if(data==1){
+									$("#see").datagrid("reload");
+								}else{
+									alert("删除失败！");
+								}
+							})	
+    				}
+    			});
+    		}
+		} 
+    },'-',{
+    	text:'保存',
+		iconCls:'icon-save',
+		 handler:function(){
+			$("#see").datagrid("endEdit",flag);
+		} 
+    },'-',{
+    	text:'取消',
+    	iconCls:'icon-redo',
+    		handler:function(){
+    		flag=undefined;
+    		$("#see").datagrid('rejectChanges');
+    	} 
+    }],
+    onAfterEdit:function(rowIndex,rowData,changes){
+    	
+    },
+   	pagination:'true',//显示行号列
+   	singleSelect:'true',//是允许选择一行
+   	pageList:[1,3,6,10],
+   	pageSize:10,
+   	sortName:'tid',
+   	sortOrder:'desc',
+    columns:[[{field:'rmid',title:'房间号',width:150,align:'center',sortable:'true'},
+            {field:'rtype',title:'客房类型',width:150,align:'center',sortable:'true',
+			    	formatter:function(val, row, index){
+				    		if(row.rtype){ 	  	    	
+				    			return row.rtype.tname;
+				    			}  
+				    		}, 
+    				editor:{type:'combobox',options:{
+    					url:"RoomType/findRT",
+    				 	valueField:"tid",
+    				 	textField:"tname"
+    				}
+    		}}, 
+	        {field:'rmprice',title:'客房价格',width:150,align:'center',editor:{type:'validatebox',options:{}}},
+	        {field:'rmstate',title:'客房状态',width:100,align:'center',editor:{type:'validatebox',options:{}}},
+	        {field:'rmdesc',title:'客房描述',width:150,align:'center',editor:{type:'validatebox',options:{}}},
+	       /*  {field:'rmdemo',title:'预留字段',width:150,align:'center',editor:{type:'validatebox',options:{}}}, */     
+    ]],
+    onAfterEdit:function(rowIndex,rowData,changes){
+    	var rmid=rowData.rmid;  	
+    	var rmprice = rowData.rmprice;
+    	var rmstate = rowData.rmstate;
+    	var rmdesc = rowData.rmdesc;    	
+    	var rmdemo = rowData.rmdemo;
+    	$.post("Room/updateR",{rmid:rmid,tid:changes.rtype,rmprice:rmprice,rmstate:rmstate,rmdesc:rmdesc,rmdemo:rmdemo,"_method":"PUT"},
+	    	function(data){//alert(tid);
+	    		if(data==1){
+	    			$("#see").datagrid("reload");
+	    		}else{
+	    			alert("修改失败！");
+	    		}
+    		})
+    }
+});  
+
+var flag = '';
+//验证房间是否已存在 以及格式
+$("#addRoomForm input[name='rmid']").blur(function(){
+	//获取相邻的span标签 并赋样式
+	$("#addRoomForm input[name='rmid'] ~ span").css("color","red");
+	
+	var rmid = $(this).val();	
+	if(rmid == ''){ //判断是否输入房间号
+		$("#addRoomForm input[name='rmid'] ~ span").html("");
+		return;
+	}
+	
+ 	//发送ajax请求
+	$.get("Room/findR",{rmid:rmid},function(data){	//console.log(data); //解析	
+		//判断重名
+		if(data == 0){
+			$("#addRoomForm input[name='rmid'] ~ span").html("房间号可用!");
+			flag = true;
+		}else{
+			$("#addRoomForm input[name='rmid'] ~ span").html("房间号已存在!");
+			flag= false;
+		}  	 
+	}); 
+});
+
+function addRoom(){
+	if(flag == true){//判断是否为重名，通过后进行表单提交	
+		$("#addRoomForm").form('submit',{
+			url:'Room/addR',
+			onSubmit:function(){ //表单提交前的回调函数
+				//所有数据符合校验要求时，isValid 返回true
+				var isValid = $(this).form('validate');
+				if(isValid == false){	
+					alert("请将客房信息按要求填写完整...");
+				}
+				return isValid;	// 如果验证不通过，返回false终止表单提交
+			},
+			success:function(data){ //alert(data);
+				if(data==1){
+					$("#Room_add_type").dialog("close");
+					$("#see").datagrid("reload");
+				}else{
+					alert("添加失败！")
+				}
+			}
+		});
+	}else{
+		alert("房间号不能为空，且不能是已经存在的...");
+	}	
+}
+
+</script>

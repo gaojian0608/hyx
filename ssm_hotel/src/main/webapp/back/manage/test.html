@@ -1,0 +1,46 @@
+<input id="Order_allRmid" style="width:300px;"/>
+
+<table id="show" border="1"></table>  
+  
+
+<script>
+//查询所有类型并给基础表格赋值
+$.get("RoomType/findRT",function(data){
+		var strname = '<tr>';
+		var strid = '<tr>';
+		for( var i=0;i<data.length;i++ ){	
+			strname+='<th style="width:100px;">'+data[i].tname+'</th>';
+			strid+='<td><table id="'+data[i].tid+'"></table>';		
+		}
+		strname+='</tr>';
+		strid+='</tr>';
+		$("#show").html(strname+strid);
+});		
+//给基础表格对应类型下的表格赋值
+$.get("RoomType/findRT",function(data){
+	for( var i=0;i<data.length;i++ ){
+		$('#'+data[i].tid).datagrid({   
+		    url:'Room/findR', 
+		    queryParams: {
+				tid: data[i].tid
+			},
+			width:100,
+			height:560,
+		    columns:[[   
+		        {field:'rmid',title:'rmid',width:98}  
+		    ]],			    
+		    onDblClickCell: function(index,field,value){
+				var str = $("#Order_allRmid").val();
+				if( str == '' ){
+					$("#Order_allRmid").val(value);
+				}else{
+					$("#Order_allRmid").val(str+","+value);
+				}
+			},
+			
+			
+		});  
+	}
+});
+
+</script>

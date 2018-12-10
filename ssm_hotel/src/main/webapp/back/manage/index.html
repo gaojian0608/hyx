@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- <embed src="music/爱的就是你.wma" hidden="false" autostart="true" loop="true"> -->
+
+<base href="/ssm_hotel/">
+<link rel="stylesheet" type="text/css" href="easyui/css/icon.css" />
+<link rel="stylesheet" type="text/css" href="easyui/css/easyui2.css" />
+<link rel="stylesheet" type="text/css" href="easyui/css/icon.css"/>
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="easyui/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/md5.js"></script>
+<style type="text/css">
+li{
+	list-style-type:none;
+	height:40px;
+	margin:0 auto;
+	padding:0px;
+}
+table{
+	border-spacing: 0;
+}
+.mainmenu li{
+	margin:0 auto;
+	width:100%;
+	height:40px;
+}
+.mainmenu li a{
+	width:100px;
+}
+#north{
+	background:url("image/15.jpg");
+	background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+	
+}
+#centert{
+	
+	
+	background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+
+}
+
+</style>
+</head>
+<body class="easyui-layout">
+
+
+
+
+	<!-- <div id="north" data-options="region:'north',title:'维他纳酒店管理系统',split:true" style="height:100px">
+		<img src="image/logo1.gif" style="width:100px; height:60px; margin-left: 100px" >
+	
+	</div> 
+	<div data-options="region:'south',title:'welcome to ycInfo',split:true" style="height:100px;">
+		<a href="" style="margin-left: 680px ;">源辰信息科技有限公司</a>
+	</div>-->
+	<div data-options="region:'west',iconCls:'icon-reload',title:'菜单目录'" style="width:180px;">
+	<div class="easyui-accordion mainmenu" data-options="fit:true">
+	<div title="订房管理">
+		<ul>
+			<li><a class="easyui-linkbutton menu" href="back/manage/online.html">网上预订</a></li>
+			<li><a class="easyui-linkbutton menu" href="back/manage/offline.html">前台预订</a></li>
+			
+		</ul>
+	</div>
+	<div title="住房管理">
+	    <ul>
+			<li><a class="easyui-linkbutton menu" href="back/manage/liveList.html">住房详情</a></li>
+			<li><a class="easyui-linkbutton menu" href="back/manage/roomUp.html">客房管理</a></li>		
+			<li><a class="easyui-linkbutton menu" href="back/manage/roomUpType.html">客房类型管理</a></li>	
+			<li><a class="easyui-linkbutton menu" href="back/manage/test.html">测试页面</a></li>		
+		</ul>
+	
+	</div>
+	<div title="会员管理">
+		 <ul>
+			<li><a class="easyui-linkbutton menu" href="back/manage/memList.html">会员列表</a></li>
+			<li><a class="easyui-linkbutton menu" href="back/manage/memCost.html">资费详情</a></li>		
+		</ul>
+		</div>  
+	<div title="员工管理">
+		 <ul>
+			<li><a class="easyui-linkbutton menu" href="back/manage/userinfo.html">员工相关</a></li>		
+		</ul>
+	</div>
+	<div title="系统管理">
+		 <ul>
+			<li><a class="easyui-linkbutton menu" href="back/manage/userinfo.html">退出系统</a></li>
+			<li><a class="easyui-linkbutton menu" href="back/manage/login.html">重启系统</a></li>		
+		</ul>
+	</div>
+	
+	</div>
+	</div>
+	<div data-options="region:'east',split:true" style="width:180px;">
+	<input id="startTime" class="easyui-datetimebox" name="birthday"    
+        data-options="required:true,showSeconds:true" value="9/10/2018 15:01" style="width:180px">  
+	</div>
+	<div id="centert" data-options="region:'center',title:'center title'" >
+	<div id="centent_panel" class="easyui-panel" data-options="fit:true"></div>
+	
+	</div>
+	 
+</body>
+<script type="text/javascript">
+	$(".menu").click(function(){
+		var href=$(this).attr('href');//获取href属性
+		$("#centent_panel").panel("refresh",href)//刷新面板中的centent内容
+		return false;//阻止页面跳转
+	});
+
+
+</script>
+</html>

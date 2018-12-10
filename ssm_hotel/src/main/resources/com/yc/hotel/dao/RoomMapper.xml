@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.yc.hotel.dao.RoomMapper">
+
+<!-- 新增客房：public int insertRoom(RoomPO po); -->
+<insert id="insertRoom" parameterType="RoomPO">
+	insert into room(rmid,tid,rmprice,rmstate,rmdesc,rmdemo) 
+	values(#{rmid},#{tid},#{rmprice},'空闲',#{rmdesc},#{rmdemo})
+</insert>
+
+<!-- 修改:public int updatetRoom(RoomPO po); -->
+<update id="updatetRoom" parameterType="RoomPO">
+	update room 
+	<set>
+		<if test="tid != null">
+			tid = #{tid},
+		</if>
+		<if test="rmprice != null and rmprice != 0">
+			rmprice = #{rmprice},
+		</if>
+		<if test="rmstate != null and rmstate != ''">
+			rmstate = #{rmstate},
+		</if>
+		<if test="rmdesc != null and rmdesc != ''">
+			rmdesc = #{rmdesc},
+		</if>
+		<if test="rmdemo != null and rmdemo != ''">
+			rmdemo = #{rmdemo},
+		</if>
+	</set>
+	where rmid = #{rmid}
+</update>
+
+<!-- 删除:public int deleteRoom(RoomPO po); -->
+<delete id="deleteRoom" parameterType="RoomPO">
+	delete from room where rmid = #{rmid}
+</delete>
+
+<!-- 查询:public List<RoomPO> seleteRoom(RoomPO po); -->
+<resultMap type="RoomPO" id="ftroom">
+	<id column="rmid" property="rmid"/>
+	<result column="tid" property="tid"/>
+	<result column="rmprice" property="rmprice"/>
+	<result column="rmstate" property="rmstate"/>
+	<result column="rmdesc" property="rmdesc"/>
+	<result column="rmdemo" property="rmdemo"/>
+	<result column="tid" property="rtype.tid"/>
+	<result column="tname" property="rtype.tname"/>
+	<result column="tnum" property="rtype.tnum"/>
+	<result column="pnum" property="rtype.pnum"/>
+	<result column="tdesc" property="rtype.tdesc"/>
+	<result column="tdemo" property="rtype.tdemo"/>
+</resultMap>
+<select id="seleteRoom" parameterType="RoomPO" resultMap="ftroom">
+	select * from room r INNER JOIN roomtype t on r.tid = t.tid
+	<where>
+		<if test="rmid != null">
+			and rmid = #{rmid}
+		</if>
+		<if test="tid != null">
+			and r.tid = #{tid}
+		</if>
+		<if test="rmprice != null and rmprice != 0">
+			and rmprice = #{rmprice}
+		</if>
+		<if test="rmstate != null and rmstate != ''">
+			and rmstate = #{rmstate}
+		</if>
+		<if test="rmdesc != null and rmdesc != ''">
+			<bind name="rmdesc" value="'%'+_parameter.getRmdesc+'%'"/>
+			and rmdesc like #{rmdesc}
+		</if>
+		<if test="rmdemo != null">
+			and rmdemo = #{rmdemo}
+		</if>
+		<if test="rtype != null &amp;&amp; rtype.tname != null &amp;&amp; rtype.tname != &quot;&quot;">
+			t.tname = #{rtype.tname}
+		</if>
+		<if test="rtype != null &amp;&amp; rtype.pnum != null">
+			t.pnum = #{rtype.pnum}
+		</if>
+	</where>
+</select>
+</mapper>

@@ -1,0 +1,246 @@
+html {
+  font-size: 56.5%;
+}
+
+#app {
+  cursor: pointer;
+  overflow: hidden;
+  background: #FFF;
+  height: 85vh;
+  width: 46vh;
+  display: grid;
+  grid-template-columns: 5rem 1fr 2rem;
+  grid-template-rows: 5rem 1fr 4rem 1.2fr;
+  grid-row-gap: 2rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.4rem;
+  border: 1px solid #CCC;
+  border-radius: 3vh;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.1);
+}
+#app > .ui-header {
+  grid-row: 1 / 2;
+}
+#app > .ui-wallet {
+  grid-column: 2 / -1;
+  grid-row: 2 / -1;
+  z-index: 1;
+}
+#app > .ui-expenses {
+  grid-column: 2 / -1;
+  grid-row: 3 / 4;
+}
+#app > .ui-bottom {
+  grid-column: 2 / -2;
+  grid-row: 4 / 5;
+  overflow-y: auto;
+}
+
+.ui-expenses {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.ui-expense-price {
+  font-size: 2.8rem;
+}
+
+/* ---------------------------------- */
+.ui-cards {
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-perspective: 1000px;
+          perspective: 1000px;
+  -webkit-perspective-origin: 100% 0%;
+          perspective-origin: 100% 0%;
+}
+
+.ui-card {
+  position: absolute;
+  padding: 3rem;
+  background: #EFCDCD;
+  --light: #EFCDCD;
+  --dark: #E5A9BB;
+  background: linear-gradient(to bottom left, var(--light), var(--dark));
+  border-radius: 2rem;
+  color: #FFF;
+  width: 120%;
+  padding-bottom: 44%;
+}
+.ui-card ~ .ui-card {
+  -webkit-transform: translateY(-200%);
+          transform: translateY(-200%);
+}
+
+.ui-card[data-card="AnimEx"] {
+  --light: #838385;
+  --dark: #454545;
+}
+
+.ui-card[data-card="Easea"] {
+  --light: #6A9EF0;
+  --dark: #2955bb;
+}
+
+.ui-card-title {
+  font-size: 2.8rem;
+}
+
+.ui-card-type {
+  opacity: 0.8;
+}
+
+.ui-card-number {
+  position: absolute;
+  bottom: 3rem;
+  left: 3rem;
+}
+
+/* ---------------------------------- */
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.ui-table thead {
+  color: #aaa;
+  font-size: 1.2rem;
+}
+.ui-table th,
+.ui-table td {
+  padding: .5em .25em;
+}
+.ui-table .ui-item-title {
+  font-weight: 600;
+}
+.ui-table .ui-item-time {
+  font-size: 1rem;
+}
+
+th.ui-price {
+  text-align: right;
+}
+
+th.ui-day {
+  text-align-last: left;
+}
+
+td.ui-price {
+  text-align: right;
+  vertical-align: top;
+}
+
+/* ---------------------------------- */
+.ui-wallet-heading,
+.ui-cards,
+.ui-card,
+.ui-expenses,
+.ui-bottom,
+tr {
+  transition: opacity .5s ease, -webkit-transform .6s ease;
+  transition: transform .6s ease, opacity .5s ease;
+  transition: transform .6s ease, opacity .5s ease, -webkit-transform .6s ease;
+  -webkit-transform: translateY(0%);
+          transform: translateY(0%);
+}
+
+tr {
+  transition-delay: calc( var(--i) * 50ms);
+}
+
+.ui-expenses {
+  transition-duration: .5s;
+}
+
+.ui-wallet-heading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  font-size: 3rem;
+}
+
+[data-state="card"] .ui-wallet-heading {
+  opacity: 0;
+  -webkit-transform: translateY(-10vh);
+          transform: translateY(-10vh);
+}
+
+[data-state="wallet"] .ui-card:nth-child(1) {
+  -webkit-transform: translateY(10rem) rotateX(-40deg) translateZ(-10rem);
+          transform: translateY(10rem) rotateX(-40deg) translateZ(-10rem);
+}
+[data-state="wallet"] .ui-card:nth-child(2) {
+  -webkit-transform: translateY(10rem) rotateX(-40deg) translateZ(-20rem);
+          transform: translateY(10rem) rotateX(-40deg) translateZ(-20rem);
+}
+[data-state="wallet"] .ui-card:nth-child(3) {
+  -webkit-transform: translateY(10rem) rotateX(-40deg) translateZ(-30rem);
+          transform: translateY(10rem) rotateX(-40deg) translateZ(-30rem);
+}
+[data-state="wallet"] .ui-cards {
+  -webkit-transform: translateY(12rem);
+          transform: translateY(12rem);
+}
+[data-state="wallet"] .ui-expenses,
+[data-state="wallet"] .ui-bottom {
+  -webkit-transform: translateY(20vh);
+          transform: translateY(20vh);
+}
+[data-state="wallet"] .ui-expenses,
+[data-state="wallet"] .ui-bottom {
+  opacity: 0;
+}
+[data-state="wallet"] tr {
+  opacity: 0;
+  -webkit-transform: translateY(100%);
+          transform: translateY(100%);
+  transition-delay: calc( (var(--total) - var(--i)) * 50ms);
+}
+
+/* ---------------------------------- */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ddd;
+  color: #000;
+  background: linear-gradient(to bottom left, #FEFEFE, #ddd);
+}
+body:before, body:after {
+  content: '';
+  height: 70vmin;
+  width: 70vmin;
+  border-radius: 50%;
+  position: absolute;
+  background-image: linear-gradient(to right, #FBE4E7, #FBBECF);
+  z-index: -1;
+  opacity: 0.6;
+}
+body:before {
+  left: 15%;
+  bottom: -15vw;
+}
+body:after {
+  right: 15%;
+  bottom: -5vw;
+  z-index: -3;
+  opacity: 0.5;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  position: relative;
+}
+
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

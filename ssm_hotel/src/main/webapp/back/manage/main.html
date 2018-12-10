@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主界面</title>
+<base href="/ssm_hotel/">
+<link rel="stylesheet" type="text/css" href="easyui/css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="easyui/css/icon.css" />
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="easyui/easyui-lang-zh_CN.js"></script>
+<style type="text/css">
+ul,li{
+list-style:nono;
+margin:0 auto;
+padding:0px;
+}
+.mainmenu li{
+	margin:0 auto;
+	width:120px;
+	height:30px;
+	magin-top:10px;
+}
+#north{
+	background:url("image/15.jpg");
+	background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+	
+}
+#centert{
+	
+	background:url("image/8 (1).jpg");
+	background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- 
+	<div class="easyui-layout" style="width:1500px;height:700px;">
+	<div id="north" data-options="region:'north',title:'维他纳酒店管理系统',split:true" style="height:100px">
+		<img src="image/logo1.gif" style="width:100px; height:60px; margin-left: 100px" >
+	
+	</div>
+	<div data-options="region:'south',title:'welcome to ycInfo',split:true" style="height:100px;">
+		<a href="" style="margin-left: 680px ;">源辰信息科技有限公司</a>
+	</div>
+	<div data-options="region:'east',iconCls:'icon-reload',title:'菜单目录'" style="width:180px;">
+	<div class="easyui-accordion mainmenu" data-options="fit:true">
+	<div title="订房管理">
+		<ul>
+			<li><a class="easyui-linkbutton menu" href="addStudent.html">网上预订</a></li>
+			<li><a class="easyui-linkbutton menu" href="findStudent.html"></a></li>
+			
+		</ul>
+	</div>
+	<div title="考勤管理">
+	    <ul>
+			<li><a class="easyui-linkbutton menu" href="addCheck.html">在线考勤</a></li>
+			<li><a class="easyui-linkbutton menu" href="findCheck.html">查看考勤</a></li>
+			
+		</ul>
+	
+	</div>
+	<div title="权限管理">
+		    <ul>
+			<li><a class="easyui-linkbutton menu" href="classinfo.html">班级管理</a></li>
+			<li><a class="easyui-linkbutton menu" href="userinfo.html">用户管理</a></li>
+			
+		</ul>
+	</div>
+	</div>
+	</div>
+	<div data-options="region:'west',split:true" style="width:180px;">
+	<input id="startTime" class="easyui-datetimebox" name="birthday"    
+        data-options="required:true,showSeconds:true" value="9/10/2018 15:01" style="width:180px">  
+	</div>
+	<div id="centert" data-options="region:'center',title:'center title'" >
+	<div id="centent_panel" class="easyui-panel" data-options="fit:true"></div>
+	
+	</div>
+	</div> 
+</body>
+<script type="text/javascript">
+	$(".menu").click(function(){
+		var href=$(this).attr('href');//获取href属性
+		$("#centent_panel").panel("refresh",href)//刷新面板中的centent内容
+		return false;//阻止页面跳转
+	});
+</script> 
+     -->
+</body> 
+</html>

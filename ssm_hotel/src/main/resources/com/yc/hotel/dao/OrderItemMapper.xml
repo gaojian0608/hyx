@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.yc.hotel.dao.OrderItemMapper">
+
+<!-- 新增:public int insertOrderItem(List<OrderItemPO> pos); -->
+<insert id="insertOrderItem" parameterType="com.yc.hotel.po.OrderItemPO">
+	insert into orderitem(orid,idcard,rmid,oiarrival,oideparture,oiday,type,price,oidemo01,oidemo02) values  
+	<foreach collection="list" item="item" separator=",">
+		(#{item.orid},#{item.idcard},#{item.rmid},#{item.oiarrival},#{item.oideparture},
+		 #{item.oiday},#{item.type},#{item.price},#{item.oidemo01},#{item.oidemo02})
+	</foreach>
+</insert>
+
+
+<!-- 修改:public int updateOrderItem(OrderItemPO po); -->
+<update id="updateOrderItem" parameterType="com.yc.hotel.po.OrderItemPO">
+	update orderitem 
+	<set>
+		<if test="idcard != null and idcard != ''">
+			idcard = #{idcard},
+		</if>
+		<if test="rmid != null">
+			rmid = #{rmid},
+		</if>
+		<if test="oiarrival != null and oiarrival != ''">
+			oiarrival = #{oiarrival},
+		</if>
+		<if test="oideparture != null and oideparture != ''">
+			oideparture = #{oideparture},
+		</if>
+		<if test="oiday != null and oiday != ''">
+			oiday = #{oiday},
+		</if>
+		<if test="type != null and type != ''">
+			type = #{type},
+		</if>
+		<if test="price != null and price != ''">
+			price = #{price},
+		</if>
+		<if test="oidemo01 != null and oidemo01 != ''">
+			oidemo01 = #{oidemo01},
+		</if>
+		<if test="oidemo02 != null and oidemo02 != ''">
+			oidemo02 = #{oidemo02},
+		</if>
+	</set>
+	where oiid = #{oiid}
+</update>
+
+<!-- 删除:public int deleteOrderItem(OrderItemPO po); -->
+<delete id="deleteOrderItem" parameterType="com.yc.hotel.po.OrderItemPO">
+	delete from orderitem
+	<where>
+		<if test="oiid != null and oiid != ''">
+			and oiid = #{oiid}
+		</if>
+		<if test="orid != null and orid != ''">
+			and orid = #{orid}
+		</if>
+	</where>
+</delete>
+
+<!-- 查询:public List<OrderItemPO> seleteOrderItem(OrderItemPO po); -->
+<select id="seleteOrderItem" parameterType="com.yc.hotel.po.OrderItemPO" resultType="com.yc.hotel.po.OrderItemPO">
+	select * from orderitem
+	<where>
+		<if test="oiid != null and oiid != ''">
+			and oiid = #{oiid}
+		</if>
+		<if test="orid != null and orid != ''">
+			and orid = #{orid}
+		</if>
+		<if test="oiarrival != null and oiarrival != ''">
+			and oiarrival = #{oiarrival}
+		</if>
+		<if test="oideparture != null and oideparture != ''">
+			and oideparture = #{oideparture}
+		</if>
+		<if test="idcard != null and idcard != ''">
+			<bind name="idcard" value="'%'+_parameter.getIdcard+'%'"/>
+			and idcard like #{idcard}
+		</if>
+		<if test="rmid != null">
+			and rmid = #{rmid}
+		</if>
+		<if test="oiday != null and oiday != ''">
+			and oiday = #{oiday}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="price != null and price != ''">
+			and price = #{price}
+		</if>
+		<if test="oidemo01 != null and oidemo01 != ''">
+			and oidemo01 = #{oidemo01}
+		</if>
+		<if test="oidemo02 != null and oidemo02 != ''">
+			and oidemo02 = #{oidemo02}
+		</if>
+	</where>
+</select>
+
+</mapper>

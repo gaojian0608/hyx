@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.yc.hotel.dao.RoomTypeMapper">
+
+<!-- 添加:public int insertRoomType(List<OrderItemPO> pos) -->
+<insert id="insertRoomType" parameterType="RoomTypePO">
+	insert into roomtype(tname,tnum,pnum,tdesc,tdemo) values(#{tname},${0},#{pnum},#{tdesc},#{tdemo})
+</insert>
+
+<!-- 修改:public int updateRoomType(RoomTypePO po); -->
+<update id="updateRoomType" parameterType="RoomTypePO">
+	update roomtype 
+	<set>
+		<if test="tname != null and tname != '' ">
+			tname = #{tname},
+		</if>
+		<if test="tnum != null ">
+			tnum = tnum + #{tnum},
+		</if>
+		<if test="pnum != null ">
+			pnum = #{pnum},
+		</if>
+		<if test="tdesc != null and tdesc != '' ">
+			tdesc = #{tdesc},
+		</if>
+		<if test="tdemo != null and tdemo != '' ">
+			tdemo = #{tdemo},
+		</if>
+	</set>
+	where tid = #{tid}
+</update>
+
+<!-- 删除:public int deleteRoomType(RoomTypePO po); -->
+<delete id="deleteRoomType" parameterType="RoomTypePO">
+	delete from roomtype 
+	<where>
+		<if test="tid != null and tid != 0">
+			and tid = #{tid}
+		</if>
+		<if test="tname != null and tname != '' ">
+			and tname = #{tname}
+		</if>
+	</where>
+</delete>
+
+<!-- 查询:public List<RoomTypePO> seleteRoomType(RoomTypePO po); -->
+<select id="seleteRoomType" parameterType="RoomTypePO" resultType="RoomTypePO">
+	select * from roomtype 
+	<where>
+		<if test="tid != null and tid != 0">
+			and tid = #{tid}
+		</if>
+		<if test="tname != null and tname != '' ">
+			<bind name="tname" value="'%'+_parameter.getTname+'%'"/>
+			and tname like #{tname}
+		</if>
+		<if test="tnum != null ">
+			and tnum = #{tnum}
+		</if>
+		<if test="pnum != null ">
+			and pnum = #{pnum}
+		</if>
+		<if test="tdesc != null and tdesc != '' ">
+			<bind name="tdesc" value="'%'+_parameter.getTdesc+'%'"/>
+			and tdesc = #{tdesc}
+		</if>
+		<if test="tdemo != null and tdemo != '' ">
+			and tdemo = #{tdemo}
+		</if>
+	</where>
+</select>
+
+</mapper>
+
