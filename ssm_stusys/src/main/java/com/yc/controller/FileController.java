@@ -47,6 +47,7 @@ public class FileController {
 			System.out.println("上传成功...");
  		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println("错误");
 		}
 		//将文件上传到服务器中的某个硬盘文件中
 		return "hello";
